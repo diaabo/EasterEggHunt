@@ -7,105 +7,113 @@
   document.head.appendChild(s);
 
   function init() {
-    var w1 = document.querySelector('.bunny-wrap');
-    if (!w1) return;
+    var raw = document.querySelector('.bunny-wrap');
+    if (!raw) return;
 
-    // Stop CSS jump animation, park off-screen
-    w1.style.animation  = 'none';
-    w1.style.transition = 'none';
-    w1.style.position   = 'fixed';
-    w1.style.bottom     = '-10px';
-    w1.style.left       = '-120px';
-    w1.style.right      = 'auto';
-    w1.style.zIndex     = '2';
-    w1.style.transform  = 'scaleX(1)';
+    // We will extract the bunny as a template to clone.
+    var tmpl1 = raw.cloneNode(true);
+    tmpl1.style.animation = 'none';
+    tmpl1.style.transition = 'none';
+    tmpl1.style.position = 'fixed';
+    tmpl1.style.bottom = '-10px';
+    tmpl1.style.left = '-120px';
+    tmpl1.style.right = 'auto';
+    tmpl1.style.zIndex = '2';
+    tmpl1.style.opacity = '1';
+    tmpl1.style.transform = 'scaleX(1)';
+    tmpl1.style.pointerEvents = 'none';
 
-    var s1 = w1.querySelector('.bunny');
+    var s1 = tmpl1.querySelector('.bunny');
     if (s1) { s1.style.animation = 'bunnyBounce 0.4s ease-in-out infinite alternate'; }
 
-    // Mirror clone → bunny2
-    var w2 = w1.cloneNode(true);
-    w2.style.left          = 'calc(100vw + 120px)';
-    w2.style.right         = 'auto';
-    w2.style.opacity       = '0';
-    w2.style.transform     = 'scaleX(-1)';
-    w2.style.pointerEvents = 'none';
-    var s2 = w2.querySelector('.bunny');
-    if (s2) { s2.style.animation = 'bunnyBounce 0.4s ease-in-out infinite alternate'; }
-    document.body.appendChild(w2);
+    var tmpl2 = tmpl1.cloneNode(true);
+    tmpl2.style.transform = 'scaleX(-1)';
 
-    var SOLO  = 3500;
-    var LEG   = 2000;
+    // Remove the original one from the DOM so we only see our dynamic ones
+    raw.remove();
+
+    var SOLO = 3500;
+    var LEG = 2000;
     var PAUSE = 600;
-    var busy  = false;
 
-    function rf() { return w1.offsetWidth; }
-
-    function runSolo() {
-      if (busy) return;
-      busy = true;
+    function runSolo(fromRight) {
+      if (fromRight) console.log("🐇 A correr da direita para a esquerda!");
+      else console.log("🐇 A correr da esquerda para a direita!");
+      
       var vw = window.innerWidth;
-      w1.style.transition = 'none';
-      w1.style.opacity    = '1';
-      w1.style.transform  = 'scaleX(1)';
-      w1.style.left       = '-120px';
-      rf();
-      w1.style.transition = 'left ' + SOLO + 'ms linear';
-      w1.style.left = (vw + 120) + 'px';
+      var b = fromRight ? tmpl2.cloneNode(true) : tmpl1.cloneNode(true);
+      var speed = SOLO - 500 + Math.random() * 1000;
+      b.querySelector('.bunny').style.animationDuration = (0.35 + Math.random() * 0.1).toFixed(2) + 's';
+      
+      if (fromRight) {
+        b.style.left = (vw + 120) + 'px';
+      } else {
+        b.style.left = '-120px';
+      }
+      document.body.appendChild(b);
+
+      // give the browser a frame to place the bunny before moving it
+      setTimeout(function() {
+        b.style.transition = 'left ' + speed + 'ms linear';
+        b.style.left = fromRight ? '-120px' : (vw + 120) + 'px';
+      }, 50);
+
       setTimeout(function () {
-        w1.style.transition = 'none';
-        w1.style.left = '-120px';
-        busy = false;
-        scheduleNext();
-      }, SOLO + 200);
+        if (b.parentNode) b.remove();
+      }, speed + 200);
     }
 
     function runEncounter() {
-      if (busy) return;
-      busy = true;
-      var vw  = window.innerWidth;
+      var vw = window.innerWidth;
       var mid = Math.round(vw / 2);
+      var legSpeed = LEG - 300 + Math.random() * 600;
 
-      w1.style.transition = 'none'; w1.style.opacity = '1';
-      w1.style.transform  = 'scaleX(1)'; w1.style.left = '-120px';
-      w2.style.transition = 'none'; w2.style.opacity = '1';
-      w2.style.transform  = 'scaleX(-1)'; w2.style.left = (vw + 120) + 'px';
-      rf();
+      var b1 = tmpl1.cloneNode(true);
+      var b2 = tmpl2.cloneNode(true);
+      b1.querySelector('.bunny').style.animationDuration = (0.35 + Math.random() * 0.1).toFixed(2) + 's';
+      b2.querySelector('.bunny').style.animationDuration = (0.35 + Math.random() * 0.1).toFixed(2) + 's';
 
-      // Rush toward centre
-      w1.style.transition = 'left ' + LEG + 'ms linear'; w1.style.left = (mid - 110) + 'px';
-      w2.style.transition = 'left ' + LEG + 'ms linear'; w2.style.left = (mid + 10)  + 'px';
+      b2.style.left = (vw + 120) + 'px';
+
+      document.body.appendChild(b1);
+      document.body.appendChild(b2);
+
+      b1.offsetWidth; b2.offsetWidth;
+
+      b1.style.transition = 'left ' + legSpeed + 'ms linear'; b1.style.left = (mid - 110) + 'px';
+      b2.style.transition = 'left ' + legSpeed + 'ms linear'; b2.style.left = (mid + 10) + 'px';
 
       setTimeout(function () {
-        // Flip to face origins
-        w1.style.transition = 'none'; w1.style.transform = 'scaleX(-1)';
-        w2.style.transition = 'none'; w2.style.transform = 'scaleX(1)';
-        rf();
+        b1.style.transition = 'none'; b1.style.transform = 'scaleX(-1)';
+        b2.style.transition = 'none'; b2.style.transform = 'scaleX(1)';
+        b1.offsetWidth; b2.offsetWidth;
         setTimeout(function () {
-          // Run back
-          w1.style.transition = 'left ' + LEG + 'ms linear'; w1.style.left = '-120px';
-          w2.style.transition = 'left ' + LEG + 'ms linear'; w2.style.left = (vw + 120) + 'px';
+          b1.style.transition = 'left ' + legSpeed + 'ms linear'; b1.style.left = '-120px';
+          b2.style.transition = 'left ' + legSpeed + 'ms linear'; b2.style.left = (vw + 120) + 'px';
           setTimeout(function () {
-            w1.style.transition = 'none';
-            w2.style.transition = 'none';
-            w2.style.opacity = '0';
-            busy = false;
-            scheduleNext();
-          }, LEG + 200);
+            if (b1.parentNode) b1.remove();
+            if (b2.parentNode) b2.remove();
+          }, legSpeed + 200);
         }, PAUSE);
-      }, LEG);
+      }, legSpeed);
     }
 
     function scheduleNext() {
-      // 8–18 s between appearances; 25 % chance of encounter
-      var delay = 8000 + Math.random() * 10000;
       setTimeout(function () {
-        if (Math.random() < 0.25) { runEncounter(); } else { runSolo(); }
-      }, delay);
+        var r = Math.random();
+        if (r < 0.25) {
+          runSolo(false);
+        } else if (r < 0.50) {
+          runSolo(true);
+        } else if (r < 0.75) {
+          runEncounter();
+        }
+        scheduleNext();
+      }, 2000);
     }
 
-    // First run shortly after page load
-    setTimeout(runSolo, 1800);
+    // Start scheduling loop
+    scheduleNext();
   }
 
   if (document.readyState === 'loading') {
