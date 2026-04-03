@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐣 Pista 5 – Caça ao Ovo de Páscoa!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #F0FFF4 0%, #FFFDE7 40%, #FFF0F5 100%);
+      font-family: 'Nunito', sans-serif;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .egg {
+      position: fixed;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      opacity: 0.18;
+      animation: floatEgg linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes floatEgg {
+      0% {
+        transform: translateY(110vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.18;
+      }
+
+      90% {
+        opacity: 0.18;
+      }
+
+      100% {
+        transform: translateY(-15vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .leaf {
+      position: fixed;
+      font-size: 1.5rem;
+      opacity: 0.15;
+      animation: floatLeaf linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes floatLeaf {
+      0% {
+        transform: translateY(110vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.15;
+      }
+
+      90% {
+        opacity: 0.15;
+      }
+
+      100% {
+        transform: translateY(-15vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    .bunny-wrap {
+      position: fixed;
+      bottom: -10px;
+      left: -80px;
+      z-index: 2;
+      animation: bunnyJump 6.5s ease-in-out infinite;
+    }
+
+    @keyframes bunnyJump {
+      0% {
+        left: -80px;
+      }
+
+      45% {
+        left: calc(100vw + 80px);
+      }
+
+      46% {
+        left: calc(100vw + 80px);
+        opacity: 0;
+      }
+
+      47% {
+        left: -80px;
+        opacity: 0;
+      }
+
+      48% {
+        opacity: 1;
+      }
+
+      100% {
+        left: -80px;
+      }
+    }
+
+    .bunny {
+      width: 90px;
+      animation: bunnyBounce 0.4s ease-in-out infinite alternate;
+    }
+
+    @keyframes bunnyBounce {
+      from {
+        transform: translateY(0px);
+      }
+
+      to {
+        transform: translateY(-18px);
+      }
+    }
+
+    .card {
+      position: relative;
+      z-index: 10;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 28px 24px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      justify-content: center;
+    }
+
+    .badge {
+      background: linear-gradient(135deg, #66BB6A, #A5D6A7);
+      color: #fff;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1rem;
+      padding: 6px 20px;
+      border-radius: 50px;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 14px rgba(102, 187, 106, 0.4);
+    }
+
+    .title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 2.4rem;
+      color: #2E7D32;
+      text-align: center;
+      margin-bottom: 8px;
+      text-shadow: 2px 2px 0px #C8E6C9;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #388E3C;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .clue-box {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(8px);
+      border-radius: 24px;
+      padding: 28px 24px;
+      box-shadow: 0 8px 32px rgba(102, 187, 106, 0.2);
+      border: 3px solid #C8E6C9;
+      width: 100%;
+      text-align: center;
+    }
+
+    .clue-icon {
+      font-size: 3.5rem;
+      margin-bottom: 14px;
+      display: block;
+      animation: wiggle 2s ease-in-out infinite;
+    }
+
+    @keyframes wiggle {
+
+      0%,
+      100% {
+        transform: rotate(-5deg);
+      }
+
+      50% {
+        transform: rotate(5deg);
+      }
+    }
+
+    .clue-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1B5E20;
+      line-height: 1.65;
+    }
+
+    .clue-text em {
+      color: #2E7D32;
+      font-style: normal;
+    }
+
+    .critter-row {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 16px 0;
+      font-size: 2.2rem;
+      animation: wobble 2s ease-in-out infinite;
+    }
+
+    @keyframes wobble {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-4px);
+      }
+
+      75% {
+        transform: translateX(4px);
+      }
+    }
+
+    .math-hint {
+      margin-top: 12px;
+      font-size: 1rem;
+      color: #388E3C;
+      font-weight: 600;
+      background: #F1F8E9;
+      border-radius: 12px;
+      padding: 8px 16px;
+    }
+
+    .stars {
+      margin-top: 22px;
+      font-size: 1.6rem;
+      letter-spacing: 6px;
+    }
+
+    .footer-eggs {
+      margin-top: 32px;
+      font-size: 2rem;
+      opacity: 0.5;
+      letter-spacing: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="egg" style="width:55px;height:72px;background:#66BB6A;left:8%;animation-duration:12s;animation-delay:0s;">
+  </div>
+  <div class="egg"
+    style="width:40px;height:52px;background:#FFD166;left:22%;animation-duration:15s;animation-delay:3s;"></div>
+  <div class="egg"
+    style="width:65px;height:84px;background:#FF8FAB;left:55%;animation-duration:10s;animation-delay:1s;"></div>
+  <div class="egg"
+    style="width:35px;height:46px;background:#B5DEFF;left:75%;animation-duration:18s;animation-delay:5s;"></div>
+  <div class="egg"
+    style="width:50px;height:65px;background:#D4A5FF;left:88%;animation-duration:13s;animation-delay:2s;"></div>
+
+  <div class="leaf" style="left:15%;animation-duration:10s;animation-delay:0s;">🍀</div>
+  <div class="leaf" style="left:45%;animation-duration:14s;animation-delay:4s;">🌿</div>
+  <div class="leaf" style="left:75%;animation-duration:12s;animation-delay:2s;">🍃</div>
+  <div class="leaf" style="left:30%;animation-duration:16s;animation-delay:8s;">🌱</div>
+
+  <div class="bunny-wrap">
+    <svg class="bunny" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="60" cy="100" rx="38" ry="34" fill="#F9E4D4" />
+      <circle cx="60" cy="65" r="26" fill="#F9E4D4" />
+      <ellipse cx="44" cy="32" rx="9" ry="22" fill="#F9E4D4" />
+      <ellipse cx="44" cy="32" rx="5" ry="16" fill="#FFB6C1" />
+      <ellipse cx="76" cy="32" rx="9" ry="22" fill="#F9E4D4" />
+      <ellipse cx="76" cy="32" rx="5" ry="16" fill="#FFB6C1" />
+      <circle cx="51" cy="61" r="4" fill="#4A3060" />
+      <circle cx="69" cy="61" r="4" fill="#4A3060" />
+      <circle cx="52.5" cy="59.5" r="1.5" fill="white" />
+      <circle cx="70.5" cy="59.5" r="1.5" fill="white" />
+      <ellipse cx="60" cy="70" rx="4" ry="3" fill="#FFB6C1" />
+      <path d="M56 73 Q60 78 64 73" stroke="#E88FAB" stroke-width="1.5" fill="none" stroke-linecap="round" />
+      <circle cx="46" cy="68" r="5" fill="#FFD6E8" opacity="0.6" />
+      <circle cx="74" cy="68" r="5" fill="#FFD6E8" opacity="0.6" />
+      <circle cx="92" cy="105" r="10" fill="white" />
+      <ellipse cx="42" cy="128" rx="14" ry="9" fill="#F9E4D4" transform="rotate(-15 42 128)" />
+      <ellipse cx="78" cy="128" rx="14" ry="9" fill="#F9E4D4" transform="rotate(15 78 128)" />
+      <ellipse cx="60" cy="108" rx="12" ry="8" fill="#66BB6A" />
+      <path d="M48 108 Q60 116 72 108" stroke="#2E7D32" stroke-width="2" fill="none" />
+    </svg>
+  </div>
+
+  <div class="card">
+    <div class="badge">🥚 CAÇA AO OVO DE PÁSCOA 🥚</div>
+    <h1 class="title">Pista Nº 5 🕷️</h1>
+    <p class="subtitle">Lê com atenção e descobre a resposta!</p>
+
+    <div class="clue-box">
+      <span class="clue-icon">🐜</span>
+      <p class="clue-text">
+        No jardim encontrei uma <em>aranha</em> a tecer<br />
+        e uma <em>formiga</em> apressada a querer comer.<br /><br />
+        Se somares as patas de ambas<br />
+        e depois subtraíres as <em>cores do arco-íris</em>,<br />
+        que número dá esta confusão?
+      </p>
+
+    </div>
+
+    <div class="footer-eggs">🥚🐣🥚🐣🥚</div>
+  </div>
+
+  <script src="bunny.js"></script>
+</body>
+
+</html>
